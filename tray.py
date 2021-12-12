@@ -22,6 +22,7 @@ class TaskBarIcon(wx.adv.TaskBarIcon):
 			create_menu_item(menu, 'Hide window', self.OnShowHide)
 		else:
 			create_menu_item(menu, 'Show window', self.OnShowHide)
+		create_menu_item(menu, 'Quick Upload...', self.frame.QuickUpload)
 		create_menu_item(menu, 'Exit', self.on_exit)
 		return menu
 
