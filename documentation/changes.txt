@@ -1,4 +1,5 @@
 New in 2.3
+Window hidden state is now persisted.
 Quick upload function in system tray menu.
 Add hotkey (Win shift Y) for quick upload function.
 
