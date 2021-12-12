@@ -1,5 +1,6 @@
 New in 2.3
 Quick upload function in system tray menu.
+Add hotkey (Win shift Y) for quick upload function.
 
 New in 2.2
 Change link field in main window to pop up dialog.
