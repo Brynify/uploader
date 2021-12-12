@@ -1,8 +1,12 @@
+New in 2.3
+Quick upload function in system tray menu.
+
 New in 2.2
 Change link field in main window to pop up dialog.
 Add system tray icon.
 Add shortcut key (Windows shift U) to hide and unhide the uploader.
 UI cleanup and bugfixes
+
 New in 2.1
 Thanks Josh (@joshms123) for these changes! :)
 * Updates to Python3
