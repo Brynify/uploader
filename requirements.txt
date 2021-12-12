@@ -1,6 +1,3 @@
 keyboard_handler
 git+https://github.com/accessibleapps/sound_lib
 requests
-configobj
-validate
-tweepy

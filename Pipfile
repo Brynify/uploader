@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 sound-lib = {git = "https://github.com/accessibleapps/sound_lib"}
 requests = "*"
-tweepy = "==3.10.0"
+keyboard_handler = "*"
 tweak = "*"
 wxpython = "*"
 
