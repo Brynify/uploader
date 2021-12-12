@@ -4,7 +4,7 @@
 block_cipher = None
 
 
-a = Analysis(['uploader.py'],
+a = Analysis(['uploader.pyw'],
              pathex=[],
              binaries=[],
              datas=[],
