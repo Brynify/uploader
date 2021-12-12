@@ -54,10 +54,13 @@ class AudioUploader(wx.Frame):
 	def ToggleWindow(self,event=None):
 		if self.IsShown():
 			self.Show(False)
+			self.config.shown=False
 		else:
 			self.Show(True)
 			self.Raise()
 			self.select_file.SetFocus()
+			self.config.shown=True
+
 	def OnUpload(self,event):
 		self.UploadThread = Thread(target=self.StartUpload)
 		self.UploadThread.start()
@@ -135,4 +138,5 @@ def ask(parent=None, message='', default_value=''):
 app = wx.App(redirect=False)
 window=AudioUploader(application.name+" "+application.version)
 window.Show()
+if window.config.get("shown",True)==False: window.Show(False)
 app.MainLoop()
