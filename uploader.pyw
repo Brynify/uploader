@@ -30,6 +30,7 @@ class AudioUploader(wx.Frame):
 		self.tray=tray.TaskBarIcon(self)
 		self.handler=WXKeyboardHandler(self)
 		self.handler.register_key("win+shift+u",self.ToggleWindow)
+		self.handler.register_key("win+shift+y",self.QuickUpload)
 		self.panel = wx.Panel(self)
 		self.main_box = wx.BoxSizer(wx.VERTICAL)
 		self.select_file = wx.Button(self.panel, -1, "&Select File")
