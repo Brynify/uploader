@@ -9,17 +9,15 @@ import os.path as path
 import sys
 import urllib
 import application
-
 import requests
 import wx
 
 # Globals
-
 audio=audio_input.AudioInput()
-
 
 class AudioUploader(wx.Frame):
 	"""Application to allow uploading of audio files to SndUp"""
+	
 	def __init__(self, title):
 		self.recording=False
 		wx.Frame.__init__(self, None, title=title, size=wx.DefaultSize) # initialize the wx frame
@@ -50,7 +48,7 @@ class AudioUploader(wx.Frame):
 		self.close.Bind(wx.EVT_BUTTON, self.OnClose)
 		self.main_box.Add(self.close, 0, wx.ALL, 10)
 		self.panel.Layout()
-
+	
 	def ToggleWindow(self,event=None):
 		if self.IsShown():
 			self.Show(False)
@@ -60,39 +58,38 @@ class AudioUploader(wx.Frame):
 			self.Raise()
 			self.select_file.SetFocus()
 			self.config.shown=True
-
+	
 	def OnUpload(self,event):
 		self.UploadThread = Thread(target=self.StartUpload)
 		self.UploadThread.start()
-
+	
 	def StartUpload(self):
 		"""Starts an upload; only runs after a standard operating system find file dialog has been shown and a file selected"""
 		self.select_file.Hide()
 		self.upload.Hide()
 		self.record.Hide()
-		r=requests.post("https://www.sndup.net/post.php", files={"file":open(audio.filename,'rb')})
+		r = requests.post("https://www.sndup.net/post.php", files={"file":open(audio.filename,'rb')})
 		try:
 			wx.CallAfter(lambda: ShowLink(self,r.json()['url']))
 		except:
 			ShowLink(self,"Error: "+str(r.text))
 		self.Reset()
-
+	
 	def Record(self,event):
-		if self.recording==False:
+		if not self.recording:
 			audio.start_recording()
 			self.record.SetLabel("&Stop")
 			self.select_file.Hide()
 			self.upload.Hide()
-			self.recording=True
-
-		elif self.recording==True:
+			self.recording = True
+		elif self.recording:
 			audio.stop_recording()
 			self.record.SetLabel("&Record")
 			self.select_file.Show()
 			self.upload.Show()
-			self.recording=False
-			audio.is_recording=True
-
+			self.recording = False
+			audio.is_recording = True
+	
 	def SelectFile(self,event=None):
 		"""Opens a standard OS find file dialog to find an audio file to upload"""
 		openFileDialog = wx.FileDialog(self, "Select the audio file to be uploaded", "", "", "Audio Files (*.mp3, *.ogg, *.wav, *.flac, *.opus)|*.mp3; *.ogg; *.wav; *.flac; *.opus", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
@@ -103,9 +100,8 @@ class AudioUploader(wx.Frame):
 		if audio.is_recording==True:
 			audio.cleanup()
 		self.record.Hide()
-
 		self.upload.Show()
-
+	
 	def Reset(self, event=None):
 		self.record.Show()
 		self.upload.Hide()
@@ -113,12 +109,12 @@ class AudioUploader(wx.Frame):
 		self.select_file.SetFocus()
 		if audio.is_recording==True:
 			audio.cleanup()
-
+	
 	def QuickUpload(self,event=None):
 		res=self.SelectFile()
 		if res!=False: self.StartUpload()
 		else: self.Reset()
-
+	
 	def OnClose(self, event):
 		"""App close event handler"""
 		if audio.is_recording==True:
@@ -133,7 +129,6 @@ def ask(parent=None, message='', default_value=''):
 	result = dlg.GetValue()
 	dlg.Destroy()
 	return result
-
 
 app = wx.App(redirect=False)
 window=AudioUploader(application.name+" "+application.version)

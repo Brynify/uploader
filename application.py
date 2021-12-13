@@ -1,2 +1,2 @@
-name="Audio Uploader"
-version="2.3"
+name = "Audio Uploader"
+version = "2.3"
