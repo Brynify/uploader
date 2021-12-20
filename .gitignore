@@ -2,6 +2,8 @@
 *~
 build/
 dist/
+macbuild/
+macdist/
 run.bat
 compile.bat
 commit.txt

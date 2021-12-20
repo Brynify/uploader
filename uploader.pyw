@@ -1,5 +1,7 @@
-from keyboard_handler.wx_handler import WXKeyboardHandler
-import tray
+import platform
+if platform.system()=="Windows":
+	from keyboard_handler.wx_handler import WXKeyboardHandler
+	import tray
 from LinkUI import ShowLink
 import audio_input
 from threading import Thread
@@ -13,11 +15,6 @@ import application
 import requests
 import wx
 
-# Globals
-
-audio=audio_input.AudioInput()
-
-
 class AudioUploader(wx.Frame):
 	"""Application to allow uploading of audio files to SndUp"""
 	def __init__(self, title):
@@ -25,12 +22,15 @@ class AudioUploader(wx.Frame):
 		wx.Frame.__init__(self, None, title=title, size=wx.DefaultSize) # initialize the wx frame
 		# load config.
 		self.config = Config(name="uploader", autosave=True)
+		self.confpath=self.config.user_config_dir
 		# window events and controls
+		self.audio=audio_input.AudioInput(self)
 		self.Bind(wx.EVT_CLOSE, self.OnClose)
-		self.tray=tray.TaskBarIcon(self)
-		self.handler=WXKeyboardHandler(self)
-		self.handler.register_key("win+shift+u",self.ToggleWindow)
-		self.handler.register_key("win+shift+y",self.QuickUpload)
+		if platform.system()=="Windows":
+			self.tray=tray.TaskBarIcon(self)
+			self.handler=WXKeyboardHandler(self)
+			self.handler.register_key("win+shift+u",self.ToggleWindow)
+			self.handler.register_key("win+shift+y",self.QuickUpload)
 		self.panel = wx.Panel(self)
 		self.main_box = wx.BoxSizer(wx.VERTICAL)
 		self.select_file = wx.Button(self.panel, -1, "&Select File")
@@ -43,9 +43,10 @@ class AudioUploader(wx.Frame):
 		self.upload.Bind(wx.EVT_BUTTON, self.OnUpload)
 		self.main_box.Add(self.upload, 0, wx.ALL, 10)
 		self.upload.Hide()
-		self.hide = wx.Button(self.panel, -1, "&Hide Window")
-		self.hide.Bind(wx.EVT_BUTTON, self.ToggleWindow)
-		self.main_box.Add(self.hide, 0, wx.ALL, 10)
+		if platform.system()=="Windows":
+			self.hide = wx.Button(self.panel, -1, "&Hide Window")
+			self.hide.Bind(wx.EVT_BUTTON, self.ToggleWindow)
+			self.main_box.Add(self.hide, 0, wx.ALL, 10)
 		self.close = wx.Button(self.panel, wx.ID_CLOSE, "&Close")
 		self.close.Bind(wx.EVT_BUTTON, self.OnClose)
 		self.main_box.Add(self.close, 0, wx.ALL, 10)
@@ -70,7 +71,7 @@ class AudioUploader(wx.Frame):
 		self.select_file.Hide()
 		self.upload.Hide()
 		self.record.Hide()
-		r=requests.post("https://www.sndup.net/post.php", files={"file":open(audio.filename,'rb')})
+		r=requests.post("https://www.sndup.net/post.php", files={"file":open(self.audio.filename,'rb')})
 		try:
 			wx.CallAfter(lambda: ShowLink(self,r.json()['url']))
 		except:
@@ -79,29 +80,29 @@ class AudioUploader(wx.Frame):
 
 	def Record(self,event):
 		if self.recording==False:
-			audio.start_recording()
+			self.audio.start_recording()
 			self.record.SetLabel("&Stop")
 			self.select_file.Hide()
 			self.upload.Hide()
 			self.recording=True
 
 		elif self.recording==True:
-			audio.stop_recording()
+			self.audio.stop_recording()
 			self.record.SetLabel("&Record")
 			self.select_file.Show()
 			self.upload.Show()
 			self.recording=False
-			audio.is_recording=True
+			self.audio.is_recording=True
 
 	def SelectFile(self,event=None):
 		"""Opens a standard OS find file dialog to find an audio file to upload"""
 		openFileDialog = wx.FileDialog(self, "Select the audio file to be uploaded", "", "", "Audio Files (*.mp3, *.ogg, *.wav, *.flac, *.opus)|*.mp3; *.ogg; *.wav; *.flac; *.opus", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
 		if openFileDialog.ShowModal() == wx.ID_CANCEL:
 			return False
-		audio.filename= openFileDialog.GetPath()
-		audio.name=path.basename(audio.filename)
-		if audio.is_recording==True:
-			audio.cleanup()
+		self.audio.filename= openFileDialog.GetPath()
+		self.audio.name=path.basename(self.audio.filename)
+		if self.audio.is_recording==True:
+			self.audio.cleanup()
 		self.record.Hide()
 
 		self.upload.Show()
@@ -111,8 +112,8 @@ class AudioUploader(wx.Frame):
 		self.upload.Hide()
 		self.select_file.Show()
 		self.select_file.SetFocus()
-		if audio.is_recording==True:
-			audio.cleanup()
+		if self.audio.is_recording==True:
+			self.audio.cleanup()
 
 	def QuickUpload(self,event=None):
 		res=self.SelectFile()
@@ -121,9 +122,10 @@ class AudioUploader(wx.Frame):
 
 	def OnClose(self, event):
 		"""App close event handler"""
-		if audio.is_recording==True:
-			audio.cleanup()
-		self.tray.on_exit(event,False)
+		if self.audio.is_recording==True:
+			self.audio.cleanup()
+		if platform.system()=="Windows":
+			self.tray.on_exit(event,False)
 		self.Destroy()
 
 def ask(parent=None, message='', default_value=''):
