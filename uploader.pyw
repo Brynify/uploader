@@ -96,7 +96,7 @@ class AudioUploader(wx.Frame):
 
 	def SelectFile(self,event=None):
 		"""Opens a standard OS find file dialog to find an audio file to upload"""
-		openFileDialog = wx.FileDialog(self, "Select the audio file to be uploaded", "", "", "Audio Files (*.mp3, *.ogg, *.wav, *.flac, *.opus)|*.mp3; *.ogg; *.wav; *.flac; *.opus", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+		openFileDialog = wx.FileDialog(self, "Select the audio file to be uploaded", "", "", "Audio Files (*.mp3, *.ogg, *.wav, *.flac, *.opus, *.m4a, *.aif, *.aiff, *.wma, *.aac, *.au, *.snd, *.amr)|*.mp3; *.ogg; *.wav; *.flac; *.opus; *.m4a; *.aif; *.aiff; *.aac; *.wma; *.au; *.snd; *.amr", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
 		if openFileDialog.ShowModal() == wx.ID_CANCEL:
 			return False
 		self.audio.filename= openFileDialog.GetPath()
