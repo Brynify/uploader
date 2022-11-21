@@ -1,3 +1,6 @@
+New in 2.4
+Adds more filetypes to the select file dialog.
+
 New in 2.3
 Window hidden state is now persisted.
 Quick upload function in system tray menu.
